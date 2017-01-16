@@ -9,6 +9,9 @@ var port = process.env.PORT || 8080;
 
 this.server = http.createServer(function(req, res) {
 
+  var parsedURL = url.parse(req.url);
+
+
   var parseRequest = function(body){
     var number = Buffer.concat(body).toString();
     var strNmb = number.replace('profiles=', '');
@@ -49,7 +52,9 @@ this.server = http.createServer(function(req, res) {
     });
   }
 
-  recordPostData();
-  iterateAndSend();
+  if (parsedURL.pathname === '/' && req.method === 'POST') {
+    recordPostData();
+    iterateAndSend();
+  }
 
 }).listen(port);
