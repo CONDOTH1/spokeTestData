@@ -45,9 +45,17 @@ this.server = http.createServer(function(req, res) {
         });
       }
     });
-  }
+  };
 
   recordPostData();
   iterateAndSend();
 
-}).listen(8080);
+});
+
+exports.listen = function(){
+  this.server.listen.apply(this.server, arguments);
+};
+
+exports.close = function(callback) {
+  this.server.close(callback);
+};
