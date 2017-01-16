@@ -4,35 +4,37 @@ var person = require('./lib/person');
 var body = [];
 var profiles = [];
 var iterator = 0;
+var port = process.env.PORT || 8080;
+
 
 this.server = http.createServer(function(req, res) {
 
   var parseRequest = function(body){
     var number = Buffer.concat(body).toString();
     var strNmb = number.replace('profiles=', '');
-    return strNmb - 0;
-  };
+    return strNmb - 0
+  }
 
   var recordPostData = function(){
     req.on('error', function(err) {console.error(err)});
     req.on('data', function(chunk) {body.push(chunk)});
-  };
+  }
 
   var iterateAndSend = function(){
     req.on('end', function() {
-      var numberOfProfiles = parseRequest(body);
+      var numberOfProfiles = parseRequest(body)
       getUserProfiles(numberOfProfiles).then(function(){
         sendResponse(res, req.headers, req.method, req.url);
       });
     });
-  };
+  }
 
   var sendResponse = function(res, headers, method, url){
     res.on('error', function(err) {console.error(err);});
     res.writeHead(200, {'Content-Type': 'application/json'});
     var resBody = {body: profiles, headers: headers, method: method, url:url};
     res.end(JSON.stringify(resBody));
-  };
+  }
 
   var getUserProfiles = function(n){
     return new Promise(function(resolve, reject){
@@ -45,17 +47,9 @@ this.server = http.createServer(function(req, res) {
         });
       }
     });
-  };
+  }
 
   recordPostData();
   iterateAndSend();
 
-});
-
-exports.listen = function(){
-  this.server.listen.apply(this.server, arguments);
-};
-
-exports.close = function(callback) {
-  this.server.close(callback);
-};
+}).listen(port);
